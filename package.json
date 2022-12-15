@@ -16,7 +16,7 @@
     "./dist"
   ],
   "dependencies": {
-    "@nutsapi/types": "^1.5.0"
+    "@nutsapi/types": "^1.6.0"
   },
   "devDependencies": {
     "@nutsapi/eslint-config-ts": "^1.0.1",
