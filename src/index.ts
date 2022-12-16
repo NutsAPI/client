@@ -1,6 +1,5 @@
 import type { ApiRequestBase, ApiResponseBase, ApiSchemaBase, Conv, ConvChain, ConvWorker, HttpRequestMethod } from '@nutsapi/types';
-import { convToObject } from '@nutsapi/types';
-import { convToPayload } from '@nutsapi/types';
+import { convToObject, convToPayload } from '@nutsapi/types';
 
 
 type AllEndPoint<Schema extends ApiSchemaBase> = (keyof Schema & string);
@@ -31,12 +30,12 @@ type RequestType<
 export class NutsAPIClient<Schema extends ApiSchemaBase, Convs extends Conv[] = []>  {
 
   constructor(
-    public converters: { [P in keyof Convs]: ConvWorker<Convs[P]> },
+    private converters: { [P in keyof Convs]: ConvWorker<Convs[P]> },
   ){}
 
   private uriPrefix = '';
 
-  customServerAddress(address: string) {
+  public customServerAddress(address: string) {
     this.uriPrefix = address;
     return this;
   }
@@ -67,26 +66,26 @@ export class NutsAPIRequest<T, U extends Record<number, unknown>, Convs extends 
   private data: T | null = null;
 
   constructor(
-    public method: HttpRequestMethod,
-    public uri: string,
+    private method: HttpRequestMethod,
+    private uri: string,
     withCredentials: boolean,
-    public converters: { [P in keyof Convs]: ConvWorker<Convs[P]> },
+    private converters: { [P in keyof Convs]: ConvWorker<Convs[P]> },
   ) {
     this.xhr.timeout = 10000;
     this.xhr.withCredentials = withCredentials;
   }
 
-  timeout(timeout: number) {
+  public timeout(timeout: number) {
     this.xhr.timeout = timeout;
     return this;
   }
 
-  send(data: T) {
+  public send(data: T) {
     this.data = data;
     return this;
   }
 
-  async fetch() {
+  public async fetch() {
     return new Promise<Responses<U>>((resolve, reject: (reason: FailedResponse) => void) => {
       const rejectWith = (reason: FailedResponse['reason']) => reject({ reason });
       (xhr => {
@@ -109,7 +108,7 @@ export class NutsAPIRequest<T, U extends Record<number, unknown>, Convs extends 
         xhr.addEventListener('timeout', () => rejectWith('timeout'));
         xhr.addEventListener('error', () => rejectWith('error'));
         
-        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8' );
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8' );
         
         if (this.method === 'GET') { xhr.send(); } else { xhr.send(JSON.stringify(convertedPayload)); }
       })(this.xhr);
