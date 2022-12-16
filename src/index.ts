@@ -1,6 +1,5 @@
 import type { ApiRequestBase, ApiResponseBase, ApiSchemaBase, Conv, ConvChain, ConvWorker, HttpRequestMethod } from '@nutsapi/types';
-import { convToObject } from '@nutsapi/types';
-import { convToPayload } from '@nutsapi/types';
+import { convToObject, convToPayload } from '@nutsapi/types';
 
 
 type AllEndPoint<Schema extends ApiSchemaBase> = (keyof Schema & string);
