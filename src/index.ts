@@ -108,7 +108,7 @@ export class NutsAPIRequest<T, U extends Record<number, unknown>, Convs extends 
         xhr.addEventListener('timeout', () => rejectWith('timeout'));
         xhr.addEventListener('error', () => rejectWith('error'));
         
-        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8' );
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8' );
         
         if (this.method === 'GET') { xhr.send(); } else { xhr.send(JSON.stringify(convertedPayload)); }
       })(this.xhr);
