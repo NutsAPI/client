@@ -91,7 +91,7 @@ export class NutsAPIRequest<T, U extends Record<number, unknown>, Convs extends 
       (xhr => {
         const convertedPayload = this.data === null ? null : convToPayload(this.data, this.converters);
 
-        xhr.open(this.method, `${this.uri}${this.method === 'GET' && convertedPayload !== null ? new URLSearchParams(convertedPayload as Record<string, string>).toString() : ''}`);
+        xhr.open(this.method, `${this.uri}${this.method === 'GET' && convertedPayload !== null ? `?${new URLSearchParams(convertedPayload as Record<string, string>).toString()}` : ''}`);
 
         xhr.addEventListener('load', () => {
           try {
