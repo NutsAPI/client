@@ -1,4 +1,5 @@
-import type { ApiRequestBase, ApiResponseBase, ApiSchemaBase, Conv, ConvChain, ConvWorker, HttpRequestMethod } from '@nutsapi/types';
+import type { ApiRequestBase, ApiResponseBase, ApiSchemaBase, Conv, ConvChain, ConvWorker, HttpRequestMethod} from '@nutsapi/types';
+import { toBase64URL } from '@nutsapi/types';
 import { convToObject, convToPayload } from '@nutsapi/types';
 
 
@@ -89,9 +90,9 @@ export class NutsAPIRequest<T, U extends Record<number, unknown>, Convs extends 
     return new Promise<Responses<U>>((resolve, reject: (reason: FailedResponse) => void) => {
       const rejectWith = (reason: FailedResponse['reason']) => reject({ reason });
       (xhr => {
-        const convertedPayload = this.data === null ? null : convToPayload(this.data, this.converters);
+        const convertedPayload = JSON.stringify(this.data === null ? null : convToPayload(this.data, this.converters));
 
-        xhr.open(this.method, `${this.uri}${this.method === 'GET' && convertedPayload !== null ? `?${new URLSearchParams(convertedPayload as Record<string, string>).toString()}` : ''}`);
+        xhr.open(this.method, `${this.uri}${this.method === 'GET' && convertedPayload !== null ? `?payload=${encodeBase64URL(convertedPayload)}` : ''}`);
 
         xhr.addEventListener('load', () => {
           try {
@@ -110,8 +111,12 @@ export class NutsAPIRequest<T, U extends Record<number, unknown>, Convs extends 
         
         xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8' );
         
-        if (this.method === 'GET') { xhr.send(); } else { xhr.send(JSON.stringify(convertedPayload)); }
+        if (this.method === 'GET') { xhr.send(); } else { xhr.send(convertedPayload); }
       })(this.xhr);
     });
   }
+}
+
+function encodeBase64URL(str: string) {
+  return toBase64URL(window.btoa(encodeURIComponent(str)));
 }
